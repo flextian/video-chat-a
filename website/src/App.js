@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import {
   BrowserRouter,
@@ -14,7 +13,7 @@ const HomePage = () =>{
 
 const AboutPage = () =>{
   return (
-    <div>hello world 2</div>
+    <div>This is the about page!</div>
   );
 }
 
