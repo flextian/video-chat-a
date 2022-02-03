@@ -4,16 +4,24 @@ import {
   Routes,
   Route
 } from "react-router-dom";
+import OuterBlueBox from './OuterBlueBox';
 
 const HomePage = () =>{
   return (
-    <div>hello world</div>
+    <div className="App">
+    <h1>Hello World!</h1>
+    <OuterBlueBox />
+    </div>
+
   );
 }
 
+
 const AboutPage = () =>{
   return (
-    <div>This is the about page!</div>
+    <div className="App">
+      <h1>This is the about page</h1>
+    </div>
   );
 }
 
