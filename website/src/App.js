@@ -1,34 +1,24 @@
-import './App.css';
-import {
-  BrowserRouter,
-  Routes,
-  Route
-} from "react-router-dom";
+import React from "react";
+import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HomePage } from "./App/HomePage";
 
-const HomePage = () =>{
+const AboutPage = () => {
   return (
-    <div>hello world</div>
+    <div>
+      <h1>This is the about page</h1>
+    </div>
   );
-}
-
-const AboutPage = () =>{
-  return (
-    <div>This is the about page!</div>
-  );
-}
+};
 
 function App() {
   return (
     <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<HomePage />}>
-
-      </Route>
-      <Route path="/a" element={<AboutPage />}>
-
-</Route>
-    </Routes>
-  </BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />}></Route>
+        <Route path="/a" element={<AboutPage />}></Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
