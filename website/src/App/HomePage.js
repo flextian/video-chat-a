@@ -21,6 +21,7 @@ const FullHeightBlueBox = styled.div`
 
 const ChatBoxContainer = styled.div`
   flex-basis: 30%;
+  display: flex;
 `;
 const VideoBoxContainer = styled.div`
   flex-basis: 70%;
