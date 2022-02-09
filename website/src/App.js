@@ -12,7 +12,7 @@ function App() {
       <Routes>
         <Route path="/start" element={<StartPage />}></Route>
         <Route path="/" element={<HomePage />}></Route>
-        <Route path="/a" element={<ScreenPage />}></Route>
+        <Route path="/screenPage" element={<ScreenPage />}></Route>
       </Routes>
     </BrowserRouter>
   );
