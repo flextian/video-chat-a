@@ -1,15 +1,18 @@
 import styled from "styled-components";
 import React from "react";
 import { ChatBox } from "./HomePage/ChatBox";
+import { VideoBox } from "./HomePage/VideoBox";
 
 export const HomePage = () => {
   return (
-    <FullHeightBlueBox>
-      <VideoBoxContainer></VideoBoxContainer>
-      <ChatBoxContainer>
-        <ChatBox />
-      </ChatBoxContainer>
-    </FullHeightBlueBox>
+      <FullHeightBlueBox>
+        <VideoBoxContainer>
+            <VideoBox />
+        </VideoBoxContainer>
+        <ChatBoxContainer>
+            <ChatBox />
+        </ChatBoxContainer>
+      </FullHeightBlueBox>
   );
 };
 
@@ -18,7 +21,6 @@ const FullHeightBlueBox = styled.div`
   height: 100vh;
   display: flex;
 `;
-
 const ChatBoxContainer = styled.div`
   flex-basis: 30%;
   display: flex;
