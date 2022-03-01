@@ -3,14 +3,14 @@ import React from "react";
 
 export const ScreenPage = () => {
   return (
-    <FullHeightBlueBox>
-      <h1>Screen page</h1>
-    </FullHeightBlueBox>
+    <Screen>
+      <p>Screen page</p>
+    </Screen>
   );
 };
 
-const FullHeightBlueBox = styled.div`
-  background-color: #2d476d;
-  height: 100vh;
+const Screen = styled.div`
+  background-color: #808080;
+  height: 30vh;
   display: flex;
 `;
