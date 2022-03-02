@@ -17,17 +17,26 @@ export const ChatBox = () => {
     { contents: "Hi", senderId: 13 },
     { contents: "My name is Eva", senderId: 2 },
   ]);
-
+  const [message, setMessage] = useState("");
+  const onMessageChange = (event) => {
+    setMessage(event.target.value);
+  };
   const onSendClick = (event) => {
     console.log("clicked!", event);
     // create a new message
     const newMessage = {
-      contents: "",
-      senderId: 0,
+      contents: message,
+      senderId: currentUser.userId,
     };
-
     // update messages
+    const newMessages = [...messages, newMessage];
+    // this way I can get the return value and put the new value in the a variable.
+    // ...operator create a new array, but push updates the existing array
+    setMessages(newMessages);
     // clear text box
+    if (setMessage(event.target.value)) {
+      
+    }
   };
 
   return (
@@ -36,10 +45,7 @@ export const ChatBox = () => {
         Messages go here!
       </Messages>
       <Row>
-        <StyledInput
-          value="yes!"
-          onChange={(event) => console.log(event)}
-        ></StyledInput>
+        <StyledInput value={message} onChange={onMessageChange}></StyledInput>
         <StyledButton onClick={onSendClick}>send</StyledButton>
       </Row>
     </Column>
