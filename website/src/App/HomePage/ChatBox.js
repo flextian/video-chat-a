@@ -1,6 +1,10 @@
 import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
+import socketIOClient from "socket.io-client";
+
+const socket = socketIOClient("http:localhost:8000", {secure: false})
+
 
 // const messages = [
 //   { contents: "Hi", senderId: 13 },
@@ -22,12 +26,14 @@ export const ChatBox = () => {
     console.log("clicked!", event);
     // create a new message
     const newMessage = {
-      contents: "",
+      contents: "test",
       senderId: 0,
     };
 
     // update messages
     // clear text box
+
+    sendMessage(newMessage); // Sends the message to the backend socket server
   };
 
   return (
@@ -95,3 +101,11 @@ const StyledButton = styled.button`
   border-color: #2d476d;
   border-style: solid;
 `;
+
+function sendMessage(message) {
+  socket.emit("chatMSG", message);
+}
+
+socket.on('chatMSG', function(msg) {
+  console.log(msg);
+});
