@@ -1,10 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 
-const socket = socketIOClient("http:localhost:8000", {secure: false})
-
+var socket;
 
 // const messages = [
 //   { contents: "Hi", senderId: 13 },
@@ -17,21 +16,40 @@ const users = [
 const currentUser = { userId: 2 };
 
 export const ChatBox = () => {
+
+  useEffect(() => {
+    console.log("CONNECTING SOCKET")
+    socket = socketIOClient("http://localhost:8000", {secure: false})
+
+    socket.on('chatMSGClient', function(msg) {
+      console.log(msg);
+      const tempMessageCopy = [...messages];
+      tempMessageCopy.push(msg);
+      console.log(tempMessageCopy)
+      setMessages(tempMessageCopy);
+      console.log(messages)
+    });
+    
+  },[])
+
+  const [x, setX] = useState("");
+
   const [messages, setMessages] = useState([
     { contents: "Hi", senderId: 13 },
     { contents: "My name is Eva", senderId: 2 },
   ]);
 
   const onSendClick = (event) => {
-    console.log("clicked!", event);
+    console.log("clicked!");
     // create a new message
     const newMessage = {
-      contents: "test",
-      senderId: 0,
+      contents: x,
+      senderId: 2,
     };
 
     // update messages
     // clear text box
+    setX("")
 
     sendMessage(newMessage); // Sends the message to the backend socket server
   };
@@ -43,8 +61,8 @@ export const ChatBox = () => {
       </Messages>
       <Row>
         <StyledInput
-          value="yes!"
-          onChange={(event) => console.log(event)}
+          value={x}
+          onChange={(event) => setX(event.target.value)}
         ></StyledInput>
         <StyledButton onClick={onSendClick}>send</StyledButton>
       </Row>
@@ -105,7 +123,3 @@ const StyledButton = styled.button`
 function sendMessage(message) {
   socket.emit("chatMSG", message);
 }
-
-socket.on('chatMSG', function(msg) {
-  console.log(msg);
-});

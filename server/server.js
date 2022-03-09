@@ -4,13 +4,22 @@ const cors = require("cors");
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origins: "*:*",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["content-type"],
+        pingTimeout: 7000,
+        pingInterval: 3000
+    }
+});
 
 io.on('connection', (socket) => {
     console.log('a user connected');
 
     socket.on('chatMSG', (msg) => {
-        socket.broadcast.emit(msg.contents);
+        console.log("From " + msg.senderId + ": " + msg.contents);
+        io.emit('chatMSGClient', msg);
     });
 
 });
