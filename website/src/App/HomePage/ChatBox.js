@@ -22,12 +22,9 @@ export const ChatBox = () => {
     socket = socketIOClient("http://localhost:8000", {secure: false})
 
     socket.on('chatMSGClient', function(msg) {
-      console.log(msg);
+      messages.push(msg);
       const tempMessageCopy = [...messages];
-      tempMessageCopy.push(msg);
-      console.log(tempMessageCopy)
       setMessages(tempMessageCopy);
-      console.log(messages)
     });
     
   },[])
