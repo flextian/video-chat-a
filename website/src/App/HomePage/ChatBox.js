@@ -1,6 +1,9 @@
 import React from "react";
 import styled from "styled-components";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import socketIOClient from "socket.io-client";
+
+var socket;
 
 // const messages = [
 //   { contents: "Hi", senderId: 13 },
@@ -13,30 +16,41 @@ const users = [
 const currentUser = { userId: 2 };
 
 export const ChatBox = () => {
+
+  useEffect(() => {
+    console.log("CONNECTING SOCKET")
+    socket = socketIOClient("http://localhost:8000", {secure: false})
+
+    socket.on('chatMSGClient', function(msg) {
+      messages.push(msg);
+      const tempMessageCopy = [...messages];
+      setMessages(tempMessageCopy);
+    });
+    
+  },[])
+
   const [messages, setMessages] = useState([
     { contents: "Hi", senderId: 13 },
     { contents: "My name is Eva", senderId: 2 },
   ]);
+
   const [message, setMessage] = useState("");
+
   const onMessageChange = (event) => {
     setMessage(event.target.value);
   };
+
   const onSendClick = (event) => {
-    console.log("clicked!", event);
+    console.log("clicked!");
     // create a new message
     const newMessage = {
       contents: message,
       senderId: currentUser.userId,
     };
-    // update messages
-    const newMessages = [...messages, newMessage];
-    // this way I can get the return value and put the new value in the a variable.
-    // ...operator create a new array, but push updates the existing array
-    setMessages(newMessages);
-    // clear text box
-    if (setMessage(event.target.value)) {
-      
-    }
+    setMessage("")
+    // Sends the message to the backend socket server
+    // Messages sent by the current user are sent to the backend first, then returned to the current user 
+    sendMessage(newMessage); 
   };
 
   return (
@@ -101,3 +115,7 @@ const StyledButton = styled.button`
   border-color: #2d476d;
   border-style: solid;
 `;
+
+function sendMessage(message) {
+  socket.emit("chatMSG", message);
+}
