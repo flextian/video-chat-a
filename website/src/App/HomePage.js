@@ -5,9 +5,10 @@ import { VideoBox } from "./HomePage/VideoBox";
 import Peer from "peerjs"; 
 import socketIOClient from "socket.io-client";
 
-
 export const HomePage = () => {
   const [socket, setSocket] = useState(undefined);
+
+  const [users, setUsers] = useState([{ id: 2, name: "Eva"}]);
 
   useEffect(() => {
     setSocket(socketIOClient("http://localhost:8000", {secure: false}));
@@ -30,7 +31,7 @@ export const HomePage = () => {
             <VideoBox />
         </VideoBoxContainer>
         <ChatBoxContainer>
-            <ChatBox socket = { socket } />
+            <ChatBox socket = { socket } users = { users } />
         </ChatBoxContainer>
       </FullHeightBlueBox>
   );

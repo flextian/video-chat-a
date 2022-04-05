@@ -9,14 +9,13 @@ import socketIOClient from "socket.io-client";
 // ];
 
 var socket;
+var users;
 
-const users = [
-  { id: 13, name: "Kurtoo" },
-  { id: 2, name: "Eva" },
-];
 const currentUser = { userId: 2 };
 
 export const ChatBox = (props) => {
+
+  users = props.users;
 
   useEffect(() => {
     if (props.socket != undefined) {
@@ -35,7 +34,6 @@ export const ChatBox = (props) => {
   }, [props.socket])
 
   const [messages, setMessages] = useState([
-    { contents: "Hi", senderId: 13 },
     { contents: "My name is Eva", senderId: 2 },
   ]);
 
@@ -60,7 +58,7 @@ export const ChatBox = (props) => {
 
   return (
     <Column>
-      <Messages messages={messages} users={users} currentUser={currentUser}>
+      <Messages messages={messages} users={users}>
         Messages go here!
       </Messages>
       <Row>
@@ -71,14 +69,13 @@ export const ChatBox = (props) => {
   );
 };
 
-const Messages = ({ messages, users, currentUser }) => {
+const Messages = ({ messages, users}) => {
   return (
     <GrowBox>
       {messages.map((message) => (
         <Message
           message={message}
           users={users}
-          currentUser={currentUser}
         ></Message>
       ))}
     </GrowBox>
@@ -88,7 +85,7 @@ const GrowBox = styled.div`
   flex-grow: 1;
 `;
 
-const Message = ({ message, users, currentUser }) => {
+const Message = ({ message, users}) => {
   const user = users.find((user) => user.id === message.senderId);
   const userName = user.name;
   return (
