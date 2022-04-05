@@ -1,16 +1,36 @@
 import styled from "styled-components";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ChatBox } from "./HomePage/ChatBox";
 import { VideoBox } from "./HomePage/VideoBox";
+import Peer from "peerjs"; 
+import socketIOClient from "socket.io-client";
+
 
 export const HomePage = () => {
+  const [socket, setSocket] = useState(undefined);
+
+  useEffect(() => {
+    setSocket(socketIOClient("http://localhost:8000", {secure: false}));
+
+    const peer = new Peer();
+
+    peer.on('open', (peerId) => {
+      console.log(peerId);
+    });
+    
+    peer.on('error', function(err) {
+      console.log("Error: ", err);
+    });
+
+  }, [])
+
   return (
       <FullHeightBlueBox>
         <VideoBoxContainer>
             <VideoBox />
         </VideoBoxContainer>
         <ChatBoxContainer>
-            <ChatBox />
+            <ChatBox socket = { socket } />
         </ChatBoxContainer>
       </FullHeightBlueBox>
   );

@@ -3,31 +3,36 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 
-var socket;
-
 // const messages = [
 //   { contents: "Hi", senderId: 13 },
 //   { contents: "My name is Eva", senderId: 2 },
 // ];
+
+var socket;
+
 const users = [
   { id: 13, name: "Kurtoo" },
   { id: 2, name: "Eva" },
 ];
 const currentUser = { userId: 2 };
 
-export const ChatBox = () => {
+export const ChatBox = (props) => {
 
   useEffect(() => {
-    console.log("CONNECTING SOCKET")
-    socket = socketIOClient("http://localhost:8000", {secure: false})
+    if (props.socket != undefined) {
+      socket = props.socket;
 
-    socket.on('chatMSGClient', function(msg) {
-      messages.push(msg);
-      const tempMessageCopy = [...messages];
-      setMessages(tempMessageCopy);
-    });
-    
-  },[])
+      console.log("CONNECTING SOCKET");
+      //socket = socketIOClient("http://localhost:8000", {secure: false})
+  
+      socket.on('chatMSGClient', function(msg) {
+        messages.push(msg);
+        const tempMessageCopy = [...messages];
+        setMessages(tempMessageCopy);
+      });
+
+    }    
+  }, [props.socket])
 
   const [messages, setMessages] = useState([
     { contents: "Hi", senderId: 13 },
@@ -117,5 +122,6 @@ const StyledButton = styled.button`
 `;
 
 function sendMessage(message) {
+  console.log("From the send message function" + socket);
   socket.emit("chatMSG", message);
 }
