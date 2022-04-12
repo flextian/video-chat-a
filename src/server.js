@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const app = express();
 const cors = require("cors");
 const http = require('http');
@@ -14,6 +15,13 @@ const io = new Server(server, {
     }
 });
 
+// add middlewares
+app.use(express.static(path.join(__dirname, "..", "build")));
+app.use(express.static("public"));
+
+app.use((req, res, next) => {
+    res.sendFile(path.join(__dirname, "..", "build", "index.html"));
+});
 
 io.on('connection', (socket) => {
     console.log('a user connected');
@@ -29,6 +37,8 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(8000, function () {
+const PORT = process.env.PORT || 8000;
+
+server.listen(PORT, function () {
     console.log("Listening on 8 000");
 });

@@ -35,7 +35,9 @@ export const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    let curSocket = socketIOClient("http://localhost:8000", {secure: false});
+    const isProduction = process.env.REACT_APP_ENV === "PRODUCTION";
+    const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
+    let curSocket = socketIOClient(API_ENDPOINT, {secure: isProduction});
     setSocket(curSocket);
 
     let ourUserId = uuidV4();
@@ -43,27 +45,52 @@ export const HomePage = () => {
     console.log("our user id: ", ourUserId);
 
     // const peer = new Peer(ourUserId);
-    const peer = new Peer(ourUserId, {
-      host: "web-video-chat-peer-server-v2.herokuapp.com",
-      port: 80,
-      secure: false,
-      'iceServers': [
-          {url: 'stun:stun.l.google.com:19302'},
-          {url: 'turn:numb.viagenie.ca:3478', credential: 'muazkh', username: 'web...@live.com'},
-          {url: 'turn:numb.viagenie.ca', credential: 'muazkh', username: 'web...@live.com'},
-          {
-              url: 'turn:192.158.29.39:3478?transport=udp',
-              credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-              username: '28224511:1379330808'
-          },
-          {
-              url: 'turn:192.158.29.39:3478?transport=tcp',
-              credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-              username: '28224511:1379330808'
-          }
-      ]
-  });
 
+    let peer;
+
+    if (isProduction) {
+      peer = new Peer(ourUserId, {
+          host: "web-video-chat-peer-server-v2.herokuapp.com",
+          port: 443,
+          secure: true,
+          'iceServers': [
+              {url: 'stun:stun.l.google.com:19302'},
+              {url: 'turn:numb.viagenie.ca:3478', credential: 'muazkh', username: 'web...@live.com'},
+              {url: 'turn:numb.viagenie.ca', credential: 'muazkh', username: 'web...@live.com'},
+              {
+                  url: 'turn:192.158.29.39:3478?transport=udp',
+                  credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+                  username: '28224511:1379330808'
+              },
+              {
+                  url: 'turn:192.158.29.39:3478?transport=tcp',
+                  credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+                  username: '28224511:1379330808'
+              }
+          ]
+      });
+    } else {
+      peer = new Peer(ourUserId, {
+          host: "web-video-chat-peer-server-v2.herokuapp.com",
+          port: 80,
+          secure: false,
+          'iceServers': [
+              {url: 'stun:stun.l.google.com:19302'},
+              {url: 'turn:numb.viagenie.ca:3478', credential: 'muazkh', username: 'web...@live.com'},
+              {url: 'turn:numb.viagenie.ca', credential: 'muazkh', username: 'web...@live.com'},
+              {
+                  url: 'turn:192.158.29.39:3478?transport=udp',
+                  credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+                  username: '28224511:1379330808'
+              },
+              {
+                  url: 'turn:192.158.29.39:3478?transport=tcp',
+                  credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+                  username: '28224511:1379330808'
+              }
+          ]
+      });
+    }
 
     peer.on('open', (ourPeerId) => {
       console.log("our peer id: ", ourPeerId);
