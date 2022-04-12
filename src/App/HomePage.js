@@ -37,6 +37,7 @@ export const HomePage = () => {
   useEffect(() => {
     const isProduction = process.env.REACT_APP_ENV === "PRODUCTION";
     const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
+    console.log("Web socket api endpoint: ", API_ENDPOINT);
     let curSocket = socketIOClient(API_ENDPOINT, {secure: isProduction});
     setSocket(curSocket);
 
