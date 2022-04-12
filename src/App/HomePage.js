@@ -49,11 +49,12 @@ export const HomePage = () => {
 
     let peer;
 
-    if (isProduction) {
+    // TODO: figure out why isProduction boolean is not correct
+    if (!isProduction) {
       console.log("connecting to prod peerjs");
       peer = new Peer(ourUserId, {
-          // host: "web-video-chat-peer-server-v2.herokuapp.com",
-          // port: 443,
+          host: "web-video-chat-peer-server-v2.herokuapp.com",
+          port: 443,
           secure: true,
           'iceServers': [
               {url: 'stun:stun.l.google.com:19302'},
