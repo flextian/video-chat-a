@@ -14,6 +14,7 @@ const io = new Server(server, {
     }
 });
 
+
 io.on('connection', (socket) => {
     console.log('a user connected');
 
@@ -22,6 +23,10 @@ io.on('connection', (socket) => {
         io.emit('chatMSGClient', msg);
     });
 
+    socket.on('emit-id', (msg) => {
+        console.log('id emitted', msg);
+        socket.broadcast.emit('peer-idClient', msg);
+    });
 });
 
 server.listen(8000, function () {
