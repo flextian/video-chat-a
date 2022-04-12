@@ -52,7 +52,7 @@ export const HomePage = () => {
     if (isProduction) {
       peer = new Peer(ourUserId, {
           host: "web-video-chat-peer-server-v2.herokuapp.com",
-          port: 443,
+          // port: 443,
           secure: true,
           'iceServers': [
               {url: 'stun:stun.l.google.com:19302'},
