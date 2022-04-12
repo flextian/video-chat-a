@@ -50,8 +50,9 @@ export const HomePage = () => {
     let peer;
 
     if (isProduction) {
+      console.log("connecting to prod peerjs");
       peer = new Peer(ourUserId, {
-          host: "web-video-chat-peer-server-v2.herokuapp.com",
+          // host: "web-video-chat-peer-server-v2.herokuapp.com",
           // port: 443,
           secure: true,
           'iceServers': [
@@ -71,6 +72,7 @@ export const HomePage = () => {
           ]
       });
     } else {
+      console.log("connecting to dev peerjs");
       peer = new Peer(ourUserId, {
           host: "web-video-chat-peer-server-v2.herokuapp.com",
           port: 80,
