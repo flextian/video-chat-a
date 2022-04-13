@@ -35,8 +35,8 @@ export const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    const isProduction = process.env.REACT_APP_ENV === "PRODUCTION";
     const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
+    const isProduction = API_ENDPOINT === "https://video-chat-a-gt.herokuapp.com";
     console.log("Web socket api endpoint: ", API_ENDPOINT);
     let curSocket = socketIOClient(API_ENDPOINT, {secure: isProduction});
     setSocket(curSocket);
@@ -50,7 +50,7 @@ export const HomePage = () => {
     let peer;
 
     // TODO: figure out why isProduction boolean is not correct
-    if (!isProduction) {
+    if (isProduction) {
       console.log("connecting to prod peerjs");
       peer = new Peer(ourUserId, {
           host: "web-video-chat-peer-server-v2.herokuapp.com",
