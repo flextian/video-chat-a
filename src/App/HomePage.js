@@ -6,9 +6,12 @@ import Peer from "peerjs";
 import socketIOClient from "socket.io-client";
 import {v4 as uuidV4} from 'uuid';
 
-export const HomePage = () => {
+export const HomePage = (props) => {
   const [socket, setSocket] = useState(undefined);
-
+  // our user id
+  const [userId, setUserId] = useState(uuidV4());
+  // map of users
+  const [userIdMap, setUserIdMap] = useState({}); 
   const [remoteStreams, setRemoteStreams] = useState({});
   const addVideoStream = (remoteStream, peerId) => {
     const remoteStreamsCopy = remoteStreams;
@@ -18,7 +21,7 @@ export const HomePage = () => {
   }
 
   const [users, setUsers] = useState([
-    { id: 2, name: "Eva"}
+    { id: userId, name: "You"}
   ]);
 
   useEffect(() => {
@@ -26,7 +29,7 @@ export const HomePage = () => {
       navigator.mediaDevices.getUserMedia({video: true, audio: true })
       .then((stream) => {
           // add your own video to the list of videos
-          addVideoStream(stream, 'ours', true);
+          addVideoStream(stream, userId);
       })
       .catch((e) => {
           alert('Error accessing camera and microphone');
@@ -41,7 +44,21 @@ export const HomePage = () => {
     let curSocket = socketIOClient(API_ENDPOINT, {secure: isProduction});
     setSocket(curSocket);
 
-    let ourUserId = uuidV4();
+    let ourUserId = userId;
+
+    curSocket.emit("update", {id: ourUserId, name: "SSTEEN"});
+
+    // tell other users about our existence
+    // curSocket.emit("update", {id: ourUserId, name: "SSTEEN"});
+    curSocket.on("user-update", (userUpdate) => {
+      setUsers(users => [...users, userUpdate]);
+      
+      console.log("got user :) update");
+      const mapCopy = userIdMap;
+      mapCopy[userUpdate.id] = userUpdate;
+      setUserIdMap(Object.assign({}, mapCopy));
+      console.log('other users', mapCopy);
+    })
 
     console.log("our user id: ", ourUserId);
 
@@ -133,6 +150,8 @@ export const HomePage = () => {
     });
 
     curSocket.on('peer-idClient', function(incomingPeerId) {
+      curSocket.emit("update", {id: ourUserId, name: "SSTEEN"});
+
       console.log("got socket message peer-idClient: ", incomingPeerId);
       console.log("our peer id: ", ourUserId);
       console.log("incoming peer id: ", incomingPeerId);
@@ -180,14 +199,27 @@ export const HomePage = () => {
             {
               Object.keys(remoteStreams).map((streamPeerId) => {
                 const stream = remoteStreams[streamPeerId];
+                const user = users.find((user) => user.id == streamPeerId);
+                const userName = user ? (user.name || "loading") : "unknown user";
+
                 return (
-                  <Video remoteStream={stream} muted={false}/>
+                  <div>
+                    <Video remoteStream={stream} muted={streamPeerId == userId}/>
+                    { userName ?
+                      <p style={{color: "white", textAlign: "center"}}> 
+                        {userName}
+                      </p> :
+                      <p>
+                        Loading...
+                      </p>
+                    }
+                  </div>
                 )
               })
             }
         </VideoBoxContainer>
         <ChatBoxContainer>
-            <ChatBox socket = { socket } users = { users } />
+            <ChatBox socket = { socket } users = { users } userId = {userId}/>
         </ChatBoxContainer>
       </FullHeightBlueBox>
   );
@@ -226,4 +258,5 @@ const Video = (props) => {
   return (
       <video controls={false} playsInline width="100%" height="240" id={'client id'} style={{width: '100%'}} ref={myVideoRef}/>
   );
+  
 }

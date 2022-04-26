@@ -11,8 +11,6 @@ import socketIOClient from "socket.io-client";
 var socket;
 var users;
 
-const currentUser = { userId: 2 };
-
 export const ChatBox = (props) => {
 
   users = props.users;
@@ -34,7 +32,7 @@ export const ChatBox = (props) => {
   }, [props.socket])
 
   const [messages, setMessages] = useState([
-    { contents: "My name is Eva", senderId: 2 },
+    { contents: "My name is Eva", senderId: props.userId },
   ]);
 
   const [message, setMessage] = useState("");
@@ -48,7 +46,7 @@ export const ChatBox = (props) => {
     // create a new message
     const newMessage = {
       contents: message,
-      senderId: currentUser.userId,
+      senderId: props.userId,
     };
     setMessage("")
     // Sends the message to the backend socket server
@@ -86,8 +84,9 @@ const GrowBox = styled.div`
 `;
 
 const Message = ({ message, users}) => {
-  const user = users.find((user) => user.id === message.senderId);
-  const userName = user.name;
+  console.log("looking at users for message: ", users);
+  const user = users.find((user) => user.id == message.senderId);
+  const userName = user ? (user.name || "loading") : "unknown user";
   return (
     <div>
       {userName}: {message.contents}

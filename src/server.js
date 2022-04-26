@@ -35,6 +35,15 @@ io.on('connection', (socket) => {
         console.log('id emitted', msg);
         socket.broadcast.emit('peer-idClient', msg);
     });
+
+    // TODO: user data update
+    socket.on('update', (userData) => {
+        // userData = {id: 'stuff', name: 'bob'}
+        // do this on clinet: socket.emit('update', userData)
+        // note that video stream id == id!
+        console.log('user update', userData);
+        io.emit('user-update', userData);
+    });
 });
 
 const PORT = process.env.PORT || 8000;
