@@ -5,12 +5,17 @@ import { VideoBox } from "./HomePage/VideoBox";
 import Peer from "peerjs"; 
 import socketIOClient from "socket.io-client";
 import {v4 as uuidV4} from 'uuid';
+import { useSearchParams } from 'react-router-dom';
 
 export const HomePage = (props) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [socket, setSocket] = useState(undefined);
 
   // our user id
   const [userId, setUserId] = useState(uuidV4());
+
+  console.log(searchParams.get("name"));
   
   // map of users
   const [userIdMap, setUserIdMap] = useState({}); 
@@ -48,10 +53,9 @@ export const HomePage = (props) => {
 
     let ourUserId = userId;
 
-    curSocket.emit("update", {id: ourUserId, name: "SSTEEN"});
+    curSocket.emit("update", {id: ourUserId, name: searchParams.get("name")});
 
     // tell other users about our existence
-    // curSocket.emit("update", {id: ourUserId, name: "SSTEEN"});
     curSocket.on("user-update", (userUpdate) => {
       setUsers(users => [...users, userUpdate]);
       
@@ -152,7 +156,7 @@ export const HomePage = (props) => {
     });
 
     curSocket.on('peer-idClient', function(incomingPeerId) {
-      curSocket.emit("update", {id: ourUserId, name: "SSTEEN"});
+      curSocket.emit("update", {id: ourUserId, name: searchParams.get("name")});
 
       console.log("got socket message peer-idClient: ", incomingPeerId);
       console.log("our peer id: ", ourUserId);
