@@ -8,8 +8,10 @@ import {v4 as uuidV4} from 'uuid';
 
 export const HomePage = (props) => {
   const [socket, setSocket] = useState(undefined);
+
   // our user id
   const [userId, setUserId] = useState(uuidV4());
+  
   // map of users
   const [userIdMap, setUserIdMap] = useState({}); 
   const [remoteStreams, setRemoteStreams] = useState({});

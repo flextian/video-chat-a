@@ -32,7 +32,6 @@ export const ChatBox = (props) => {
   }, [props.socket])
 
   const [messages, setMessages] = useState([
-    { contents: "My name is Eva", senderId: props.userId },
   ]);
 
   const [message, setMessage] = useState("");

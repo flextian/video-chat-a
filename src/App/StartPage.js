@@ -26,7 +26,7 @@ export const StartPage = () => {
                     <TextField id="standard-basic" label="Room Code" variant="standard" />
                 </Grid>
                 <Grid item>
-                    <Button variant="contained" size="Large" >Join</Button>
+                    <Button variant="contained" size="Large" href="/video">Join</Button>
                 </Grid>
             </Grid>
         </GridContainer>

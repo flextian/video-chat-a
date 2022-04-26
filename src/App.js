@@ -2,7 +2,6 @@ import React from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HomePage } from "./App/HomePage";
-import { ScreenPage } from "./App/ScreenPage/ScreenPage";
 import { StartPage } from "./App/StartPage";
 import { createTheme, ThemeProvider } from "@mui/material";
 
@@ -27,9 +26,8 @@ function App() {
     <ThemeProvider theme={mainTheme}>
       <BrowserRouter>
         <Routes>
-          <Route path="/start" element={<StartPage />}></Route>
-          <Route path="/" element={<HomePage />}></Route>
-          <Route path="/screenPage" element={<ScreenPage />}></Route>
+          <Route path="/" element={<StartPage />}></Route>
+          <Route path="/video" element={<HomePage />}></Route>
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
