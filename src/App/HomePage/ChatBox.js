@@ -3,11 +3,6 @@ import styled from "styled-components";
 import { useState, useEffect } from "react";
 import socketIOClient from "socket.io-client";
 
-// const messages = [
-//   { contents: "Hi", senderId: 13 },
-//   { contents: "My name is Eva", senderId: 2 },
-// ];
-
 var socket;
 var users;
 
@@ -43,26 +38,31 @@ export const ChatBox = (props) => {
   const onSendClick = (event) => {
     console.log("clicked!");
     // create a new message
-    const newMessage = {
-      contents: message,
-      senderId: props.userId,
-    };
-    setMessage("")
-    // Sends the message to the backend socket server
-    // Messages sent by the current user are sent to the backend first, then returned to the current user 
-    sendMessage(newMessage); 
+    if (message) {
+      const newMessage = {
+        contents: message,
+        senderId: props.userId,
+      };
+      setMessage("")
+      // Sends the message to the backend socket server
+      // Messages sent by the current user are sent to the backend first, then returned to the current user 
+      sendMessage(newMessage); 
+    }
   };
 
   return (
     <Column>
-      <Messages messages={messages} users={users}>
-        Messages go here!
-      </Messages>
+      <MessageColumn>
+          <Messages messages={messages} users={users}>
+            Messages go here!
+          </Messages>
+      </MessageColumn>
       <Row>
         <StyledInput value={message} onChange={onMessageChange}></StyledInput>
         <StyledButton onClick={onSendClick}>send</StyledButton>
       </Row>
     </Column>
+
   );
 };
 
@@ -101,6 +101,16 @@ const Column = styled.div`
   margin: 16px;
   padding: 16px;
 `;
+
+const MessageColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  background-color: #e8e6e6;
+  flex-grow: 1;
+  overflow-y: auto;
+  margin-bottom: 16px;
+`;
+
 const Row = styled.div`
   display: flex;
   gap: 8px;

@@ -206,21 +206,17 @@ export const HomePage = (props) => {
               Object.keys(remoteStreams).map((streamPeerId) => {
                 const stream = remoteStreams[streamPeerId];
                 const user = users.find((user) => user.id == streamPeerId);
-                const userName = user ? (user.name || "loading") : "unknown user";
+                const userName = user ? (user.name || "User") : "unknown user";
 
                 return (
                   <div>
                     <Video remoteStream={stream} muted={streamPeerId == userId}/>
-                    { userName ?
-                      <p style={{color: "white", textAlign: "center"}}> 
-                        {userName}
-                      </p> :
-                      <p>
-                        Loading...
-                      </p>
-                    }
+                    <p style={{color: "black", textAlign: "center"}}> 
+                      {userName}
+                    </p>
                   </div>
                 )
+
               })
             }
         </VideoBoxContainer>
@@ -242,6 +238,13 @@ const ChatBoxContainer = styled.div`
 `;
 const VideoBoxContainer = styled.div`
   flex-basis: 70%;
+  display: grid;
+  grid-template-columns: repeat(4, 25%);
+  grid-auto-rows: 33%;
+  background-color: #e8e6e6;
+  margin: 16px;
+  padding: 16px;
+  overflow-y: auto;
 `;
 
 
@@ -262,7 +265,7 @@ const Video = (props) => {
   }, [myVideoRef.current]);
 
   return (
-      <video controls={false} playsInline width="100%" height="240" id={'client id'} style={{width: '100%'}} ref={myVideoRef}/>
+      <video controls={false} playsInline width="100%" id={'client id'} ref={myVideoRef}/>
   );
   
 }
