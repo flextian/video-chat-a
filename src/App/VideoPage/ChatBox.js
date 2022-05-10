@@ -13,9 +13,6 @@ export const ChatBox = (props) => {
   useEffect(() => {
     if (props.socket != undefined) {
       socket = props.socket;
-
-      console.log("CONNECTING SOCKET");
-      //socket = socketIOClient("http://localhost:8000", {secure: false})
   
       socket.on('chatMSGClient', function(msg) {
         messages.push(msg);

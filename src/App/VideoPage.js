@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import React, { useEffect, useState, useRef } from "react";
-import { ChatBox } from "./HomePage/ChatBox";
-import { VideoBox } from "./HomePage/VideoBox";
+import { ChatBox } from "./VideoPage/ChatBox";
+import { VideoBox } from "./VideoPage/VideoBox";
 import Peer from "peerjs"; 
 import socketIOClient from "socket.io-client";
 import {v4 as uuidV4} from 'uuid';
@@ -14,37 +14,37 @@ export const HomePage = (props) => {
 
   // our user id
   const [userId, setUserId] = useState(uuidV4());
-
-  console.log(searchParams.get("name"));
   
-  // map of users
+  // map of other users
   const [userIdMap, setUserIdMap] = useState({}); 
   const [remoteStreams, setRemoteStreams] = useState({});
-  const addVideoStream = (remoteStream, peerId) => {
-    const remoteStreamsCopy = remoteStreams;
-    remoteStreamsCopy[peerId] = remoteStream;
-    setRemoteStreams(Object.assign({}, remoteStreamsCopy));
-    console.log('remote streams copy', remoteStreamsCopy);
-  }
-
   const [users, setUsers] = useState([
     { id: userId, name: "You"}
   ]);
 
+  const addVideoStream = (remoteStream, peerId) => {
+    const remoteStreamsCopy = remoteStreams;
+    remoteStreamsCopy[peerId] = remoteStream;
+    setRemoteStreams(Object.assign({}, remoteStreamsCopy));
+    console.log('LIST OF ALL REMOTE STREAMS', remoteStreamsCopy);
+  }
+
+  // add our own video stream to the screen
   useEffect(() => {
-      // add our own video stream to the screen
-      navigator.mediaDevices.getUserMedia({video: true, audio: true })
-      .then((stream) => {
-          // add your own video to the list of videos
-          addVideoStream(stream, userId);
-      })
-      .catch((e) => {
-          alert('Error accessing camera and microphone');
-          console.log('Error getting user media', e);
-      });
+    navigator.mediaDevices.getUserMedia({video: true, audio: true })
+    .then((stream) => {
+        // add your own video to the list of videos
+        addVideoStream(stream, userId);
+    })
+    .catch((e) => {
+        alert('Error accessing camera and microphone');
+        console.log('Error getting user media', e);
+    });
   }, []);
 
   useEffect(() => {
+
+    
     const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
     const isProduction = API_ENDPOINT === "https://video-chat-a-gt.herokuapp.com";
     console.log("Web socket api endpoint: ", API_ENDPOINT);
@@ -52,26 +52,21 @@ export const HomePage = (props) => {
     setSocket(curSocket);
 
     let ourUserId = userId;
-
-    curSocket.emit("update", {id: ourUserId, name: searchParams.get("name")});
+    console.log("our user id: ", ourUserId);
 
     // tell other users about our existence
-    curSocket.on("user-update", (userUpdate) => {
+    curSocket.emit("user-update", {id: ourUserId, name: searchParams.get("name")});
+
+    curSocket.on("user-update-received", (userUpdate) => {
       setUsers(users => [...users, userUpdate]);
-      
-      console.log("got user :) update");
+      console.log("received a user joining!");
       const mapCopy = userIdMap;
       mapCopy[userUpdate.id] = userUpdate;
       setUserIdMap(Object.assign({}, mapCopy));
-      console.log('other users', mapCopy);
+      console.log('other users', users);
     })
 
-    console.log("our user id: ", ourUserId);
-
-    // const peer = new Peer(ourUserId);
-
     let peer;
-
     // TODO: figure out why isProduction boolean is not correct
     if (isProduction) {
       console.log("connecting to prod peerjs");
@@ -120,8 +115,8 @@ export const HomePage = (props) => {
     }
 
     peer.on('open', (ourPeerId) => {
-      console.log("our peer id: ", ourPeerId);
       curSocket.emit("emit-id", ourPeerId);
+      console.log("peer open!1!")
     });
     
     peer.on('error', function(err) {
@@ -156,7 +151,7 @@ export const HomePage = (props) => {
     });
 
     curSocket.on('peer-idClient', function(incomingPeerId) {
-      curSocket.emit("update", {id: ourUserId, name: searchParams.get("name")});
+      curSocket.emit("user-update", {id: ourUserId, name: searchParams.get("name")});
 
       console.log("got socket message peer-idClient: ", incomingPeerId);
       console.log("our peer id: ", ourUserId);

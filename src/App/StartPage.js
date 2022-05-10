@@ -8,9 +8,14 @@ export const StartPage = () => {
 
     const [nameVal, setNameVal] = useState("");
 
+    const [roomVal, setRoomVal] = useState("");
+
     const onNameChange = (event) => {
         setNameVal(event.target.value);
-        console.log(event.target.value);
+    };
+
+    const onRoomChange = (event) => {
+        setRoomVal(event.target.value);
     };
 
     return (
@@ -33,10 +38,10 @@ export const StartPage = () => {
                     <TextField id="standard-basic" label="Name" variant="standard" onChange={onNameChange}/>
                 </Grid>
                 <Grid item>
-                    <TextField id="standard-basic" label="Room Code" variant="standard" />
+                    <TextField id="standard-basic" label="Room Code" variant="standard" onChange={onRoomChange}/>
                 </Grid>
                 <Grid item>
-                    <Button variant="contained" size="Large" href={"video?name=" + nameVal}>Join</Button>
+                    <Button variant="contained" size="Large" href={"video?name=" + nameVal + "&room=" + roomVal}>Join</Button>
                 </Grid>
             </Grid>
         </GridContainer>

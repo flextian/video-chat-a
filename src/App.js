@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { HomePage } from "./App/HomePage";
+import { HomePage } from "./App/VideoPage";
 import { StartPage } from "./App/StartPage";
 import { createTheme, ThemeProvider } from "@mui/material";
 

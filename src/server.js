@@ -26,10 +26,12 @@ app.use((req, res, next) => {
 io.on('connection', (socket) => {
     console.log('a user connected');
 
+    // When a chat message is sent, it will send it back to everyone
     socket.on('chatMSG', (msg) => {
         console.log("From " + msg.senderId + ": " + msg.contents);
         io.emit('chatMSGClient', msg);
     });
+
 
     socket.on('emit-id', (msg) => {
         console.log('id emitted', msg);
@@ -37,12 +39,9 @@ io.on('connection', (socket) => {
     });
 
     // TODO: user data update
-    socket.on('update', (userData) => {
-        // userData = {id: 'stuff', name: 'bob'}
-        // do this on clinet: socket.emit('update', userData)
-        // note that video stream id == id!
-        console.log('user update', userData);
-        io.emit('user-update', userData);
+    socket.on('user-update', (userData) => {
+        console.log('user update!', userData);
+        io.emit('user-update-received', userData);
     });
 });
 
