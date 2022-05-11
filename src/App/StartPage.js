@@ -2,8 +2,6 @@ import styled from "styled-components";
 import React, { useEffect, useState} from "react";
 import {Box, Typography, Button, TextField, Grid} from "@mui/material";
 
-
-
 export const StartPage = () => {
 
     const [nameVal, setNameVal] = useState("");

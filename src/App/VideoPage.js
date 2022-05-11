@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import React, { useEffect, useState, useRef } from "react";
 import { ChatBox } from "./VideoPage/ChatBox";
-import { VideoBox } from "./VideoPage/VideoBox";
 import Peer from "peerjs"; 
 import socketIOClient from "socket.io-client";
 import {v4 as uuidV4} from 'uuid';
@@ -15,18 +14,15 @@ export const HomePage = (props) => {
   // our user id
   const [userId, setUserId] = useState(uuidV4());
   
-  // map of other users
-  const [userIdMap, setUserIdMap] = useState({}); 
+  // map of other users names
+  const [users, setUsers] = useState({[userId]: "You"});
+
   const [remoteStreams, setRemoteStreams] = useState({});
-  const [users, setUsers] = useState([
-    { id: userId, name: "You"}
-  ]);
 
   const addVideoStream = (remoteStream, peerId) => {
     const remoteStreamsCopy = remoteStreams;
     remoteStreamsCopy[peerId] = remoteStream;
     setRemoteStreams(Object.assign({}, remoteStreamsCopy));
-    console.log('LIST OF ALL REMOTE STREAMS', remoteStreamsCopy);
   }
 
   // add our own video stream to the screen
@@ -44,7 +40,6 @@ export const HomePage = (props) => {
 
   useEffect(() => {
 
-    
     const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
     const isProduction = API_ENDPOINT === "https://video-chat-a-gt.herokuapp.com";
     console.log("Web socket api endpoint: ", API_ENDPOINT);
@@ -58,12 +53,11 @@ export const HomePage = (props) => {
     curSocket.emit("user-update", {id: ourUserId, name: searchParams.get("name")});
 
     curSocket.on("user-update-received", (userUpdate) => {
-      setUsers(users => [...users, userUpdate]);
+      const usersCopy = users;
+      usersCopy[userUpdate.id] = userUpdate.name;
+      setUsers(Object.assign({}, usersCopy));
+      console.log('LIST OF ALL USERNAMES', usersCopy);
       console.log("received a user joining!");
-      const mapCopy = userIdMap;
-      mapCopy[userUpdate.id] = userUpdate;
-      setUserIdMap(Object.assign({}, mapCopy));
-      console.log('other users', users);
     })
 
     let peer;
@@ -115,8 +109,8 @@ export const HomePage = (props) => {
     }
 
     peer.on('open', (ourPeerId) => {
-      curSocket.emit("emit-id", ourPeerId);
-      console.log("peer open!1!")
+      curSocket.emit("emit-id-on-peer", ourPeerId);
+      console.log("peer open!!!, peer id we are sending to everyone else is " + ourPeerId)
     });
     
     peer.on('error', function(err) {
@@ -128,62 +122,43 @@ export const HomePage = (props) => {
     // send your own stream for the caller and add the caller stream to your page
     navigator.mediaDevices.getUserMedia({video: true, audio: true})
         .then((stream) => {
-            // answer the call we got from B
-            console.log('our video stream we will respond with', stream);
+            // answer the call we got
+            console.log('we are getting a call, we will answer with', stream);
             call.answer(stream);
 
             // now B gives us his video stream in this method
             call.on('stream', (remoteStream) => {
-                // TODO: handle receiving video call from someone else
+                // handle receiving video call from someone else
                 console.log('stream from person who called me', remoteStream);
-
-                // TODO: add the video stream to ui
+                // add the video stream to ui
                 addVideoStream(remoteStream, call.peer);
-
-                // let all other clients know about the data of this user
-                // socket.emit("update", userData);
             })
-
         })
         .catch((e) => {
             console.log('Error answering call', e);
         });
     });
 
-    curSocket.on('peer-idClient', function(incomingPeerId) {
+    curSocket.on('emit-id-on-peer-client', function(incomingPeerId) {
       curSocket.emit("user-update", {id: ourUserId, name: searchParams.get("name")});
+      console.log("got socket message from someone else!: ", incomingPeerId);
+      callPeer(incomingPeerId);
 
-      console.log("got socket message peer-idClient: ", incomingPeerId);
-      console.log("our peer id: ", ourUserId);
-      console.log("incoming peer id: ", incomingPeerId);
-
-      if (incomingPeerId !== ourUserId) {
-        console.log("received another id: ", incomingPeerId);
-        callPeer(incomingPeerId);
-      }
     });
 
+    // When you call someone else
     const callPeer = (id) => {
       navigator.mediaDevices.getUserMedia({video: true, audio: true})
           .then((stream) => {
-              // console.log('our video stream we will send', stream);
   
               // attempt to call the other person with this stream
               let call = peer.call(id, stream);
-  
-              console.log("our video stream: ", stream);
+              console.log("our video stream we are going to send to initiate the call: ", stream);
   
               // when other person accepts, our call we also get their video:
               call.on('stream', (remoteStream) => {
-                console.log("video stream of other person: ", remoteStream);
-                  // TODO: this is the video of the new peer - display it?
-                  // console.log('stream from person I called', remoteStream);
-  
-                  // TODO: uncomment and implement method
-                  addVideoStream(remoteStream, id);
-  
-                  // let all other clients know about the data of this user
-                  // socket.emit("update", userData);
+                console.log("The other person accepted our call, the stream is: ", remoteStream);
+                addVideoStream(remoteStream, id);
               });
 
               
@@ -192,6 +167,7 @@ export const HomePage = (props) => {
               console.log('Error calling', e);
           });
     }
+
   }, [])
 
   return (
@@ -200,8 +176,7 @@ export const HomePage = (props) => {
             {
               Object.keys(remoteStreams).map((streamPeerId) => {
                 const stream = remoteStreams[streamPeerId];
-                const user = users.find((user) => user.id == streamPeerId);
-                const userName = user ? (user.name || "User") : "unknown user";
+                const userName = users[streamPeerId];
 
                 return (
                   <div>

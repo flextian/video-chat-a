@@ -32,16 +32,16 @@ io.on('connection', (socket) => {
         io.emit('chatMSGClient', msg);
     });
 
-
-    socket.on('emit-id', (msg) => {
+    socket.on('emit-id-on-peer', (msg) => {
         console.log('id emitted', msg);
-        socket.broadcast.emit('peer-idClient', msg);
+        // Send to everyone except current person
+        socket.broadcast.emit('emit-id-on-peer-client', msg);
     });
 
     // TODO: user data update
     socket.on('user-update', (userData) => {
         console.log('user update!', userData);
-        io.emit('user-update-received', userData);
+        socket.broadcast.emit('user-update-received', userData);
     });
 });
 

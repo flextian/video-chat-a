@@ -33,7 +33,6 @@ export const ChatBox = (props) => {
   };
 
   const onSendClick = (event) => {
-    console.log("clicked!");
     // create a new message
     if (message) {
       const newMessage = {
@@ -80,9 +79,7 @@ const GrowBox = styled.div`
 `;
 
 const Message = ({ message, users}) => {
-  console.log("looking at users for message: ", users);
-  const user = users.find((user) => user.id == message.senderId);
-  const userName = user ? (user.name || "loading") : "unknown user";
+  const userName = users[message.senderId];
   return (
     <div>
       {userName}: {message.contents}
@@ -124,6 +121,5 @@ const StyledButton = styled.button`
 `;
 
 function sendMessage(message) {
-  console.log("From the send message function" + socket);
   socket.emit("chatMSG", message);
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HomePage } from "./App/VideoPage";
@@ -22,6 +22,11 @@ const mainTheme = createTheme({
   },
 });
 function App() {
+
+  useEffect(() => {
+    document.title = "GT Video Chat"
+  }, [])
+
   return (
     <ThemeProvider theme={mainTheme}>
       <BrowserRouter>
