@@ -13,11 +13,15 @@ export const HomePage = (props) => {
 
   // our user id
   const [userId, setUserId] = useState(uuidV4());
+
+  // the room id we are in right now
+  const [roomId, setRoomId] = useState("");
   
   // map of other users names
   const [users, setUsers] = useState({[userId]: "You"});
 
   const [remoteStreams, setRemoteStreams] = useState({});
+
 
   const addVideoStream = (remoteStream, peerId) => {
     const remoteStreamsCopy = remoteStreams;
@@ -50,6 +54,7 @@ export const HomePage = (props) => {
     console.log("our user id: ", ourUserId);
 
     // tell other users about our existence
+    curSocket.emit("join-room", searchParams.get("room"))
     curSocket.emit("user-update", {id: ourUserId, name: searchParams.get("name")});
 
     curSocket.on("user-update-received", (userUpdate) => {
@@ -58,7 +63,7 @@ export const HomePage = (props) => {
       setUsers(Object.assign({}, usersCopy));
       console.log('LIST OF ALL USERNAMES', usersCopy);
       console.log("received a user joining!");
-    })
+    });
 
     let peer;
     // TODO: figure out why isProduction boolean is not correct
@@ -143,7 +148,6 @@ export const HomePage = (props) => {
       curSocket.emit("user-update", {id: ourUserId, name: searchParams.get("name")});
       console.log("got socket message from someone else!: ", incomingPeerId);
       callPeer(incomingPeerId);
-
     });
 
     // When you call someone else

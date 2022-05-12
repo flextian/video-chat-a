@@ -26,22 +26,32 @@ app.use((req, res, next) => {
 io.on('connection', (socket) => {
     console.log('a user connected');
 
-    // When a chat message is sent, it will send it back to everyone
-    socket.on('chatMSG', (msg) => {
-        console.log("From " + msg.senderId + ": " + msg.contents);
-        io.emit('chatMSGClient', msg);
-    });
+    socket.on('join-room', (roomId) => {
 
-    socket.on('emit-id-on-peer', (msg) => {
-        console.log('id emitted', msg);
-        // Send to everyone except current person
-        socket.broadcast.emit('emit-id-on-peer-client', msg);
-    });
+        const room = roomId;
+        socket.join(room);
 
-    // TODO: user data update
-    socket.on('user-update', (userData) => {
-        console.log('user update!', userData);
-        socket.broadcast.emit('user-update-received', userData);
+        // When a chat message is sent, it will send it back to everyone
+        socket.on('chatMSG', (msg) => {
+            console.log("From " + msg.senderId + ": " + msg.contents);
+            // Send the message to everyone, including the sender
+            io.in(room).emit('chatMSGClient', msg);
+        });
+        
+        // Activates when a user connects to the peer server
+        socket.on('emit-id-on-peer', (msg) => {
+            console.log('id emitted', msg);
+            // Send to everyone except current person
+            socket.to(room).emit('emit-id-on-peer-client', msg);
+        });
+
+        // Used to update the userIds
+        socket.on('user-update', (userData) => {
+            console.log('user update!', userData);
+            // Sent to everyone except the current user
+            socket.to(room).emit('user-update-received', userData);
+        });
+
     });
 });
 
