@@ -54,7 +54,7 @@ export const HomePage = (props) => {
     console.log("our user id: ", ourUserId);
 
     // tell other users about our existence
-    curSocket.emit("join-room", searchParams.get("room"))
+    curSocket.emit("join-room", {roomId: searchParams.get("room"), userId: ourUserId})
     curSocket.emit("user-update", {id: ourUserId, name: searchParams.get("name")});
 
     curSocket.on("user-update-received", (userUpdate) => {
@@ -172,6 +172,17 @@ export const HomePage = (props) => {
           });
     }
 
+    // When a user disconnects from the servers
+    curSocket.on("user-disconnected", (disconnectedId) => {
+      removeVideoBox(disconnectedId);
+    });
+
+    return () => {
+      console.log("CLEANING UP");
+      curSocket.close();
+      peer.disconnect();
+    };
+
   }, [])
 
   return (
@@ -183,7 +194,7 @@ export const HomePage = (props) => {
                 const userName = users[streamPeerId];
 
                 return (
-                  <div>
+                  <div id={streamPeerId + "video"}>
                     <Video remoteStream={stream} muted={streamPeerId == userId}/>
                     <p style={{color: "black", textAlign: "center"}}> 
                       {userName}
@@ -242,4 +253,9 @@ const Video = (props) => {
       <video controls={false} playsInline width="100%" id={'client id'} ref={myVideoRef}/>
   );
   
+}
+
+const removeVideoBox = (disconnectedId) => {
+  console.log(disconnectedId + " left!!")
+  document.getElementById(disconnectedId + "video").remove()
 }

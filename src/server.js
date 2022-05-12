@@ -26,10 +26,11 @@ app.use((req, res, next) => {
 io.on('connection', (socket) => {
     console.log('a user connected');
 
-    socket.on('join-room', (roomId) => {
+    socket.on('join-room', (params) => {
 
-        const room = roomId;
+        const room = params.roomId;
         socket.join(room);
+        const id = params.userId;
 
         // When a chat message is sent, it will send it back to everyone
         socket.on('chatMSG', (msg) => {
@@ -50,6 +51,11 @@ io.on('connection', (socket) => {
             console.log('user update!', userData);
             // Sent to everyone except the current user
             socket.to(room).emit('user-update-received', userData);
+        });
+
+        socket.on('disconnect', () => {
+            console.log('user disconnected!');
+            socket.to(room).emit('user-disconnected', id);
         });
 
     });
