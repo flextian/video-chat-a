@@ -30,7 +30,7 @@ export const StartPage = () => {
                 }}
             >   
                 <Grid item>
-                    <Typography variant={'h1'}>Video Chat</Typography>
+                    <Typography variant={'h1'}>GT Video Chat</Typography>
                 </Grid>
                 <Grid item>
                     <TextField id="standard-basic" label="Name" variant="standard" onChange={onNameChange}/>
@@ -39,7 +39,7 @@ export const StartPage = () => {
                     <TextField id="standard-basic" label="Room Code" variant="standard" onChange={onRoomChange}/>
                 </Grid>
                 <Grid item>
-                    <Button variant="contained" size="Large" href={"video?name=" + nameVal + "&room=" + roomVal}>Join</Button>
+                    <Button variant="contained" size="large" href={"video?name=" + nameVal + "&room=" + roomVal}>Join</Button>
                 </Grid>
             </Grid>
         </GridContainer>

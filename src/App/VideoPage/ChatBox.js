@@ -1,6 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
+import {Box, Typography, Button, TextField, Grid} from "@mui/material";
+
 import socketIOClient from "socket.io-client";
 
 var socket;
@@ -23,6 +25,12 @@ export const ChatBox = (props) => {
     }    
   }, [props.socket])
 
+  const [focused, setFocused] = React.useState(false);
+  const onFocus = () => setFocused(true);
+  const onBlur = () => setFocused(false);
+
+  const chatTextField = React.createRef();
+
   const [messages, setMessages] = useState([
   ]);
 
@@ -42,7 +50,19 @@ export const ChatBox = (props) => {
       setMessage("")
       // Sends the message to the backend socket server
       // Messages sent by the current user are sent to the backend first, then returned to the current user 
-      sendMessage(newMessage); 
+      sendMessage(newMessage);
+    }
+
+    if (focused === false) {
+      console.log(chatTextField);
+      chatTextField.current.focus();
+    }
+
+  };
+
+  const onKeyPress = (event) => {
+    if (event.key === 'Enter' && focused) {
+      onSendClick();
     }
   };
 
@@ -54,11 +74,10 @@ export const ChatBox = (props) => {
           </Messages>
       </MessageColumn>
       <Row>
-        <StyledInput value={message} onChange={onMessageChange}></StyledInput>
-        <StyledButton onClick={onSendClick}>send</StyledButton>
+        <TextField onKeyPress={onKeyPress} onFocus={onFocus} onBlur={onBlur} style={{flexGrow: 1}} size="small" value={message} onChange={onMessageChange} variant="outlined" inputRef={chatTextField}/>
+        <Button variant="contained" size="small" onClick={onSendClick}>Send</Button>
       </Row>
     </Column>
-
   );
 };
 
@@ -112,12 +131,6 @@ const Row = styled.div`
 const StyledInput = styled.input`
   flex-grow: 1;
   border: none;
-`;
-const StyledButton = styled.button`
-  background-color: #2d476d;
-  color: white;
-  border-color: #2d476d;
-  border-style: solid;
 `;
 
 function sendMessage(message) {
