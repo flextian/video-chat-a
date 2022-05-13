@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import {Box, Typography, Button, TextField, Grid} from "@mui/material";
-
+import { Card } from "@mui/material";
 import socketIOClient from "socket.io-client";
 
 var socket;
@@ -67,7 +67,7 @@ export const ChatBox = (props) => {
   };
 
   return (
-    <Column>
+    <Column elevation={6}>
       <MessageColumn>
           <Messages messages={messages} users={users}>
             Messages go here!
@@ -101,12 +101,12 @@ const Message = ({ message, users}) => {
   const userName = users[message.senderId];
   return (
     <div>
-      {userName}: {message.contents}
+      <Typography>{userName}: {message.contents}</Typography>
     </div>
   );
 };
 
-const Column = styled.div`
+const Column = styled(Card)`
   display: flex;
   flex-direction: column;
   background-color: #e8e6e6;
@@ -118,7 +118,6 @@ const Column = styled.div`
 const MessageColumn = styled.div`
   display: flex;
   flex-direction: column;
-  background-color: #e8e6e6;
   flex-grow: 1;
   overflow-y: auto;
   margin-bottom: 16px;

@@ -5,6 +5,9 @@ import Peer from "peerjs";
 import socketIOClient from "socket.io-client";
 import {v4 as uuidV4} from 'uuid';
 import { useSearchParams } from 'react-router-dom';
+import { Card, Typography} from "@mui/material";
+
+// TODO: Fix amount of white on the page
 
 export const HomePage = (props) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -187,19 +190,18 @@ export const HomePage = (props) => {
 
   return (
       <FullHeightBlueBox>
-        <VideoBoxContainer>
+        <VideoBoxContainer elevation={6}>
             {
               Object.keys(remoteStreams).map((streamPeerId) => {
                 const stream = remoteStreams[streamPeerId];
                 const userName = users[streamPeerId];
 
                 return (
-                  <div id={streamPeerId + "video"}>
-                    <Video remoteStream={stream} muted={streamPeerId == userId}/>
-                    <p style={{color: "black", textAlign: "center"}}> 
-                      {userName}
-                    </p>
-                  </div>
+                  <Card id={streamPeerId + "video"} variant="outlined">
+                      <Video remoteStream={stream} muted={streamPeerId == userId}/>
+
+                      <Typography style={{color: "black", textAlign: "center"}} variant={'h5'}>{userName}</Typography>
+                  </Card>
                 )
 
               })
@@ -221,15 +223,18 @@ const ChatBoxContainer = styled.div`
   flex-basis: 30%;
   display: flex;
 `;
-const VideoBoxContainer = styled.div`
+const VideoBoxContainer = styled(Card)`
   flex-basis: 70%;
   display: grid;
-  grid-template-columns: repeat(4, 25%);
-  grid-auto-rows: 33%;
+  grid-template-columns: repeat(4, 24%);
+  grid-auto-rows: 32%;
   background-color: #e8e6e6;
   margin: 16px;
   padding: 16px;
   overflow-y: auto;
+  column-gap: 1%;
+  row-gap: 1%;
+  justify-content: center;
 `;
 
 
