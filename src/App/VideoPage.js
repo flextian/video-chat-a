@@ -197,11 +197,10 @@ export const HomePage = (props) => {
                 const userName = users[streamPeerId];
 
                 return (
-                  <Card id={streamPeerId + "video"} variant="outlined">
+                  <VideoCard id={streamPeerId + "video"} variant="outlined">
                       <Video remoteStream={stream} muted={streamPeerId == userId}/>
-
-                      <Typography style={{color: "black", textAlign: "center"}} variant={'h5'}>{userName}</Typography>
-                  </Card>
+                      <Typography style={{color: "black", textAlign: "center"}} variant={'p'}>{userName}</Typography>
+                  </VideoCard>
                 )
 
               })
@@ -214,6 +213,12 @@ export const HomePage = (props) => {
   );
 };
 
+const VideoCard = styled(Card)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
+
 const FullHeightBlueBox = styled.div`
   background-color: #2d476d;
   height: 100vh;
@@ -221,6 +226,8 @@ const FullHeightBlueBox = styled.div`
 `;
 const ChatBoxContainer = styled.div`
   flex-basis: 30%;
+  max-width: 30%;
+  overflow-wrap: break-word;
   display: flex;
 `;
 const VideoBoxContainer = styled(Card)`
@@ -255,7 +262,7 @@ const Video = (props) => {
   }, [myVideoRef.current]);
 
   return (
-      <video controls={false} playsInline width="100%" id={'client id'} ref={myVideoRef}/>
+    <video controls={false} playsInline style={{objectFit: "cover"}} height="100%" id={'client id'} ref={myVideoRef}/>
   );
   
 }
