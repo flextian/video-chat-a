@@ -5,7 +5,7 @@
 ![Alt text](readme-images/img1.png)
 ![Alt text](readme-images/img2.png)
 
-Simple video chat application using Node.js, React, Socket.io, Express, and PeerJS with a fully functional naming system, room system, text chat, and video & audio transmission. Click [here](https://video-chat-a-gt.herokuapp.com/) for a live demo page.
+Simple video chat application using Node.js, React, Socket.io, Express, and PeerJS with a fully functional naming system, room system, text chat, and video & audio transmission. Click [here](https://web-video-chat-web-app.herokuapp.com/home) for a live demo page.
 
 ## Installation
 
